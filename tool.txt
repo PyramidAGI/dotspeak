@@ -1,0 +1,10 @@
+key
+machine
+robot
+computer
+spade
+hammer
+saw
+tool
+bicycle
+car

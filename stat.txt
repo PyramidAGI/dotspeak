@@ -1,0 +1,12 @@
+open
+close
+happy
+sad
+far
+closeby
+cold
+warm
+high
+low
+full
+empty
