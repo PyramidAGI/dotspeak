@@ -28,7 +28,7 @@ NAMES = {
     "8": "tool",
 }
 
-FONT = ("Segoe UI", 16)
+FONT = ("Segoe UI", 12)
 
 
 def list_file(code):
