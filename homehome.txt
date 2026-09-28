@@ -1,0 +1,6 @@
+person
+man
+woman
+mike
+john
+jill

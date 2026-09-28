@@ -1,0 +1,4 @@
+path
+road
+way
+channel
