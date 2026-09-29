@@ -1,0 +1,10 @@
+prompt
+DB
+test
+program
+if
+then
+else
+loop
+skill
+MDfile
