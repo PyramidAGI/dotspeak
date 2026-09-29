@@ -6,6 +6,7 @@ Keys:
     named after the code, e.g. 7 -> time.txt, 7 7 -> timetime.txt,
     7 5 -> timestat.txt.
   Up / Down   move through the list
+  + / -       move down / up in the list
   Enter       add the selected word to the sentence
   Escape      cancel the current code
   Backspace   remove the last digit of the code, or the last word
@@ -93,6 +94,10 @@ class App:
         if event.char in NAMES:
             self.code += event.char
             self.refresh()
+        elif event.char == "+":
+            self.move(1)
+        elif event.char == "-":
+            self.move(-1)
 
     def backspace(self):
         if self.code:
