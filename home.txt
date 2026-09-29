@@ -1,6 +1,7 @@
 home
 house
 here
+location
 place
 city
 town

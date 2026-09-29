@@ -3,3 +3,5 @@ negative
 few
 little
 small
+notok
+minus

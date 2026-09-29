@@ -9,3 +9,6 @@ loop
 skill
 MDfile
 screen
+video
+music
+doc
