@@ -6,7 +6,10 @@ far
 closeby
 cold
 warm
+hot
 high
 low
 full
 empty
+lightweight
+heavy
