@@ -1,0 +1,7 @@
+happy
+sad
+anxious
+depressed
+scared
+stressed
+sick
