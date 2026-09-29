@@ -1,5 +1,6 @@
 yes
 ok
+good
 correct
 alot
 much

@@ -3,3 +3,7 @@ road
 way
 channel
 hello
+up
+down
+left
+right

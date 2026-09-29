@@ -1,5 +1,7 @@
 no
+problem
 negative
+bad
 few
 little
 small
