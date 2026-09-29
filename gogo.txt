@@ -2,3 +2,6 @@ go
 move
 travel
 fly
+give
+share
+say

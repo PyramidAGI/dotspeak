@@ -1,2 +1,6 @@
 yes
 correct
+alot
+much
+many
+big

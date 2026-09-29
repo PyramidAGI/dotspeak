@@ -1,3 +1,7 @@
 home
 house
 here
+place
+city
+town
+room

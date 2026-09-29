@@ -1,3 +1,5 @@
 tolove
 tolike
 tohate
+topay
+tocost

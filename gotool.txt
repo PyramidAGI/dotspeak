@@ -1,10 +1,11 @@
 prompt
+assert
+eval
 DB
 test
 program
 if
-then
-else
 loop
 skill
 MDfile
+screen

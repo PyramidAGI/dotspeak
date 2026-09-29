@@ -1,2 +1,5 @@
 no
 negative
+few
+little
+small
