@@ -49,3 +49,12 @@ so edits show up without restarting. A missing file is reported in the
 status line.
 
 To rename the digits, edit the `NAMES` table at the top of `app.py`.
+
+## Counting entries
+
+```
+python count.py
+```
+
+Prints the number of entries in each word file and the total. It counts
+non-empty lines in every `.txt` file next to `app.py`.
