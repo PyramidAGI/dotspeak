@@ -1,0 +1,5 @@
+stay
+sleep
+rest
+sit
+lie_down

@@ -6,3 +6,4 @@ place
 city
 town
 room
+food

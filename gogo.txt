@@ -1,6 +1,7 @@
 go
 do
 move
+make
 travel
 navigate
 fly
