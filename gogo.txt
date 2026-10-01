@@ -1,6 +1,7 @@
 go
 do
 move
+build
 make
 travel
 navigate

@@ -10,3 +10,4 @@ bicycle
 car
 motor
 lamp
+mirror
