@@ -1,3 +1,10 @@
 work
 drive
 control
+clean
+clear
+lift
+carry
+move
+compute
+solve

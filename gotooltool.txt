@@ -1,0 +1,8 @@
+variable
+value
+A
+B
+C
+=
+hillclimb
+function

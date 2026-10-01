@@ -4,6 +4,7 @@ eval
 DB
 test
 program
+function
 if
 loop
 skill
