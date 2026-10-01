@@ -1,3 +1,4 @@
+minus
 no
 problem
 negative
@@ -5,5 +6,6 @@ bad
 few
 little
 small
-notok
-minus
+not-ok
+sick
+ill

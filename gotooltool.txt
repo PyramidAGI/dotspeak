@@ -1,8 +1,11 @@
 variable
 value
-A
-B
-C
 =
 hillclimb
 function
+if
+move
+copy
+A
+B
+C
