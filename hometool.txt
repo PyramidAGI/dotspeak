@@ -1,0 +1,7 @@
+chair
+table
+lamp
+bed
+blanket
+mirror
+stairs

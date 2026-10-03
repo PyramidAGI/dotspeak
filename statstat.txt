@@ -5,3 +5,4 @@ depressed
 scared
 stressed
 sick
+relaxed

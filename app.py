@@ -11,8 +11,11 @@ Keys:
   Escape      cancel the current code
   Backspace   remove the last digit of the code, or the last word
   Delete      clear the sentence
+
+On start, hometool.txt is copied over toolhome.txt.
 """
 
+import shutil
 import tkinter as tk
 from pathlib import Path
 
@@ -159,6 +162,10 @@ class App:
 
 
 def main():
+    source = BASE_DIR / "hometool.txt"
+    if source.exists():
+        shutil.copyfile(source, BASE_DIR / "toolhome.txt")
+
     root = tk.Tk()
     App(root)
     root.mainloop()
