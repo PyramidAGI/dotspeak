@@ -1,0 +1,7 @@
+greet
+live
+thrive
+evolve
+die
+think
+analyse

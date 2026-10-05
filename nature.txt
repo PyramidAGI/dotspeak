@@ -1,0 +1,9 @@
+nature
+life
+plant
+tree
+food
+mountain
+air
+animal
+insect

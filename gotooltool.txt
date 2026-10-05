@@ -6,6 +6,6 @@ function
 if
 move
 copy
-A
-B
-C
+input
+output
+process

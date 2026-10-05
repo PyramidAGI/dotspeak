@@ -1,10 +1,11 @@
 """dotspeak: build a sentence by typing number codes and picking words.
 
 Keys:
-  1 go, 2 plus, 3 minus, 4 home, 5 stat, 6 pref, 7 time, 8 tool
+  1 go, 2 plus, 3 minus, 4 loc, 5 person, 6 stat, 7 pref, 8 time, 9 tool,
+  0 nature
     Each digit extends the current code. The word list shown is the file
-    named after the code, e.g. 7 -> time.txt, 7 7 -> timetime.txt,
-    7 5 -> timestat.txt.
+    named after the code, e.g. 8 -> time.txt, 8 8 -> timetime.txt,
+    8 6 -> timestat.txt.
   Up / Down   move through the list
   + / -       move down / up in the list
   Enter       add the selected word to the sentence
@@ -12,7 +13,7 @@ Keys:
   Backspace   remove the last digit of the code, or the last word
   Delete      clear the sentence
 
-On start, hometool.txt is copied over toolhome.txt.
+On start, loctool.txt is copied over toolloc.txt.
 """
 
 import shutil
@@ -25,11 +26,13 @@ NAMES = {
     "1": "go",
     "2": "plus",
     "3": "minus",
-    "4": "home",
-    "5": "stat",
-    "6": "pref",
-    "7": "time",
-    "8": "tool",
+    "4": "loc",
+    "5": "person",
+    "6": "stat",
+    "7": "pref",
+    "8": "time",
+    "9": "tool",
+    "0": "nature",
 }
 
 FONT = ("Segoe UI", 12)
@@ -118,7 +121,7 @@ class App:
         self.words = []
 
         if not self.code:
-            self.status.config(text="Type 1-8: " + ", ".join(
+            self.status.config(text="Type 0-9: " + ", ".join(
                 f"{d}={n}" for d, n in NAMES.items()))
             return
 
@@ -162,9 +165,9 @@ class App:
 
 
 def main():
-    source = BASE_DIR / "hometool.txt"
+    source = BASE_DIR / "loctool.txt"
     if source.exists():
-        shutil.copyfile(source, BASE_DIR / "toolhome.txt")
+        shutil.copyfile(source, BASE_DIR / "toolloc.txt")
 
     root = tk.Tk()
     App(root)

@@ -6,3 +6,9 @@ day
 week
 month
 year
+fast
+slow
+now
+tomorrow
+future
+past

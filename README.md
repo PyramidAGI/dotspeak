@@ -30,19 +30,21 @@ Each digit maps to a name:
 | 1 | go |
 | 2 | plus |
 | 3 | minus |
-| 4 | home |
-| 5 | stat |
-| 6 | pref |
-| 7 | time |
-| 8 | tool |
+| 4 | loc |
+| 5 | person |
+| 6 | stat |
+| 7 | pref |
+| 8 | time |
+| 9 | tool |
+| 0 | nature |
 
 The word list for a code is the file named after the concatenated names,
 next to `app.py`:
 
-- `7` → `time.txt`
-- `7 7` → `timetime.txt`
-- `7 5` → `timestat.txt`
-- `4 4` → `homehome.txt`
+- `8` → `time.txt`
+- `8 8` → `timetime.txt`
+- `8 6` → `timestat.txt`
+- `4 4` → `locloc.txt`
 
 Word files contain one word per line. They are re-read on every keypress,
 so edits show up without restarting. A missing file is reported in the
