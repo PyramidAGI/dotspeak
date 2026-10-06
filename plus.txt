@@ -10,3 +10,4 @@ many
 big
 plus
 bright
+hot

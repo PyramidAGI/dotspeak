@@ -5,3 +5,6 @@ evolve
 die
 think
 analyse
+say
+hear
+fight

@@ -3,7 +3,6 @@ road
 location
 way
 channel
-hello
 up
 down
 left

@@ -1,8 +1,10 @@
 tool
 key
+container
 machine
 robot
 computer
+book
 spade
 hammer
 saw

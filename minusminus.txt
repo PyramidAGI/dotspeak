@@ -1,4 +1,5 @@
-tolose
-toproblem
-tocry
-toforget
+decrease
+lose
+ruin
+cry
+forget

@@ -1,4 +1,6 @@
 work
+energy
+force
 drive
 control
 clean
