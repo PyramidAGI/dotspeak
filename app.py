@@ -2,7 +2,7 @@
 
 Keys:
   1 go, 2 plus, 3 minus, 4 loc, 5 person, 6 stat, 7 pref, 8 time, 9 tool,
-  0 nature
+  0 nature, . period
     Each digit extends the current code. The word list shown is the file
     named after the code, e.g. 8 -> time.txt, 8 8 -> timetime.txt,
     8 6 -> timestat.txt.
@@ -33,6 +33,7 @@ NAMES = {
     "8": "time",
     "9": "tool",
     "0": "nature",
+    ".": "period",
 }
 
 FONT = ("Segoe UI", 12)
@@ -121,7 +122,7 @@ class App:
         self.words = []
 
         if not self.code:
-            self.status.config(text="Type 0-9: " + ", ".join(
+            self.status.config(text="Type 0-9 or .: " + ", ".join(
                 f"{d}={n}" for d, n in NAMES.items()))
             return
 

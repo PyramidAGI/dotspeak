@@ -37,6 +37,7 @@ Each digit maps to a name:
 | 8 | time |
 | 9 | tool |
 | 0 | nature |
+| . | period |
 
 The word list for a code is the file named after the concatenated names,
 next to `app.py`:
