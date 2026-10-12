@@ -146,12 +146,46 @@ removes the cargo.
 python webapp_planner.py
 ```
 
-The same planner for another world: a web app with login.
+The same planner for another world: a web app with login. It works like
+the homestead planner: choose goals or a preset, then Step or Run.
 
 | File | What it holds |
 | --- | --- |
 | `webapp_tasks.txt` | The task list: auth, DB and UI sectors, ten tasks each |
 | `webapp_world.txt` | The rules, in the same format as `homestead_world.txt` |
+| `webapp_planner.py` | The planner with its own scene; the planning is shared with `homestead_planner.py` |
+
+### Task form
+
+Every task is exactly three words after `to-`: **verb + state + object**.
+The object has the same name as in the world file, and the state is the
+state the object is in before the task:
+
+```
+to-seed empty table
+  needs: password = hashed
+  makes: table: empty -> seeded
+```
+
+| Sector | Example tasks |
+| --- | --- |
+| Auth | `to-hash plain password`, `to-build missing endpoint`, `to-expire endless session` |
+| DB | `to-install missing database`, `to-migrate empty schema`, `to-encrypt plain connection` |
+| UI | `to-design missing layout`, `to-link unlinked form`, `to-fill empty dashboard` |
+
+### How the sectors depend on each other
+
+- Passwords are hashed before users are stored in the table.
+- The login endpoint needs stored users and an encrypted connection.
+- Sessions need the endpoint and a rotated secret.
+- The login form is linked to the endpoint; the dashboard needs an
+  expiring session and an indexed query.
+
+So a UI goal pulls in DB and auth work. The goal `dashboard = filled`
+gives a plan of 14 steps, from installing the database to filling the
+dashboard. The UI preset needs 22 steps: 10 UI, 7 DB and 5 auth.
+
+### Scene
 
 The scene has one column per sector and one box per object. The colour
 shows the state: red for the start state, yellow in between, green for the

@@ -62,11 +62,16 @@ python count.py
 Prints the number of entries in each word file and the total. It counts
 non-empty lines in every `.txt` file next to `app.py`.
 
-## Homestead
+## Homestead and planners
 
-```
-python homestead.py
-```
+Three programs that work with tasks of the form verb + state + object,
+such as `to-clean dirty window`. Each task list has a world file that
+describes objects, their states, and what each task needs and changes.
 
-A game that builds a homestead from the tasks in `periodperiod.txt`, with
-rules from `homestead_world.txt`. See [HOMESTEAD.md](HOMESTEAD.md).
+| Program | Task list | World file | What it does |
+| --- | --- | --- | --- |
+| `python homestead.py` | `periodperiod.txt` | `homestead_world.txt` | A game: click tasks in a valid order to build a homestead |
+| `python homestead_planner.py` | `periodperiod.txt` | `homestead_world.txt` | Choose goals; the program plans the tasks |
+| `python webapp_planner.py` | `webapp_tasks.txt` | `webapp_world.txt` | The same planner for a web app with auth, DB and UI tasks |
+
+See [HOMESTEAD.md](HOMESTEAD.md) for the file formats and how planning works.
