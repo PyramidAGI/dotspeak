@@ -61,3 +61,12 @@ python count.py
 
 Prints the number of entries in each word file and the total. It counts
 non-empty lines in every `.txt` file next to `app.py`.
+
+## Homestead
+
+```
+python homestead.py
+```
+
+A game that builds a homestead from the tasks in `periodperiod.txt`, with
+rules from `homestead_world.txt`. See [HOMESTEAD.md](HOMESTEAD.md).
