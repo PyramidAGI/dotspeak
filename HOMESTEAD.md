@@ -114,6 +114,32 @@ homestead_world.txt line 3: unknown state window = claen
   straight away. It only shows in the scene after drawing code is added for
   it in `homestead.py`.
 
+## Planner
+
+```
+python homestead_planner.py
+```
+
+The planner uses the same two text files. You choose the goal and the
+program works out the tasks.
+
+- **Goals:** use a preset (**Everything** or one sector), or pick an object
+  and a state, such as `roof = sealed`, and click **Add**.
+- **Plan:** the planner works backward from each goal state. It finds a
+  task that makes that state and plans that task's needs first. The plan
+  only holds tasks that help reach the goals. For `roof = sealed` that is
+  14 tasks, including the transport tasks that bring the stone.
+- **Stages:** steps in the same stage do not depend on each other, so
+  different crews could do them at the same time.
+- **Why:** click a step to see which later step or goal needs it.
+- **Step** does the next task, **Run** does the rest one by one, and
+  **Reset** starts again. Changing the goals makes a new plan from the
+  current state.
+
+If the goals cannot all be true together, the planner says so. An example is
+`cargo = secured` with `truck.position = site`: unloading at the site
+removes the cargo.
+
 ## Limits
 
 The model has no amounts (how much stone), no time, no alternatives
