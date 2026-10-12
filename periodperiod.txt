@@ -1,0 +1,37 @@
+construction sector
+to_build empty ground
+to_build existing wall
+to_place new window
+to_place new roof
+1. to-clean dirty window
+2. to-level uneven floor
+3. to-repair cracked wall
+4. to-paint bare door
+5. to-seal leaking roof
+6. to-tighten loose bolt
+7. to-replace broken tile
+8. to-insulate exposed pipe
+9. to-reinforce weak beam
+10. to-sand rough timber
+transport sector
+1. to-load empty truck
+2. to-unload full trailer
+3. to-repair damaged vehicle
+4. to-inflate flat tire
+5. to-refuel empty tank
+6. to-clear blocked road
+7. to-secure loose cargo
+8. to-replace worn brake
+9. to-clean dirty windshield
+10. to-cool overheated engine
+agriculture sector
+1. to-water dry soil
+2. to-harvest ripe wheat
+3. to-prune overgrown vine
+4. to-fertilize depleted soil
+5. to-drain flooded field
+6. to-feed hungry cattle
+7. to-shear woolly sheep
+8. to-weed overgrown seedbed
+9. to-aerate compacted soil
+10. to-clean dirty stable

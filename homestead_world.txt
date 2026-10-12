@@ -1,0 +1,182 @@
+# The homestead world as objects, states and actions.
+#
+# OBJECTS
+#   object: state, state, ...
+#   An object can have several properties: object.property: state, ...
+#   The first state is the start state.
+#
+# ACTIONS
+#   The first line is the task name, as in periodperiod.txt.
+#   needs: object = state, ...         must be true before the action
+#   makes: object: from -> to, ...     changes a state; the object must be
+#                                      in the "from" state before the action
+#
+# The order of the tasks is not written here. It follows from the states:
+# an action can start when its needs and "from" states are true.
+# Lines starting with # are comments.
+
+
+# ===== OBJECTS ==========================================================
+
+# Construction
+floor: uneven, level
+wall.height: none, low, high
+wall.surface: cracked, repaired
+door: none, bare, painted
+pipe: exposed, insulated
+window: none, dirty, clean
+timber: rough, sanded, used
+beam: none, weak, strong
+bolt: none, loose, tight
+roof: none, leaking, sealed
+tile: none, broken, replaced
+
+# Transport
+truck.position: depot, site
+stone.location: depot, truck, site
+cargo: none, loose, secured
+tire: flat, inflated
+tank: empty, full
+brake: worn, new
+road: blocked, clear
+vehicle.body: damaged, repaired
+windshield: dirty, clean
+engine: overheated, cool
+
+# Agriculture
+soil.moisture: dry, watered
+soil.nutrients: depleted, fertilized
+soil.structure: compacted, aerated
+field: flooded, drained
+wheat: ripe, harvested
+hay: none, bale, eaten
+vine: overgrown, pruned
+seedbed: overgrown, weeded
+cattle: hungry, fed
+sheep: woolly, shorn
+wool: none, shorn
+stable: dirty, clean
+
+
+# ===== ACTIONS: CONSTRUCTION ============================================
+
+to-level uneven floor
+  makes: floor: uneven -> level
+
+to_build empty ground
+  needs: floor = level, stone.location = site
+  makes: wall.height: none -> low, door: none -> bare
+
+to_build existing wall
+  makes: wall.height: low -> high, beam: none -> weak
+
+to_place new window
+  needs: wall.height = high
+  makes: window: none -> dirty
+
+to-clean dirty window
+  makes: window: dirty -> clean
+
+to-repair cracked wall
+  needs: wall.height = high
+  makes: wall.surface: cracked -> repaired
+
+to-paint bare door
+  makes: door: bare -> painted
+
+to-insulate exposed pipe
+  needs: wall.height = high
+  makes: pipe: exposed -> insulated
+
+to-sand rough timber
+  makes: timber: rough -> sanded
+
+to-reinforce weak beam
+  makes: beam: weak -> strong, timber: sanded -> used, bolt: none -> loose
+
+to-tighten loose bolt
+  makes: bolt: loose -> tight
+
+to_place new roof
+  needs: beam = strong
+  makes: roof: none -> leaking, tile: none -> broken
+
+to-seal leaking roof
+  makes: roof: leaking -> sealed
+
+to-replace broken tile
+  makes: tile: broken -> replaced
+
+
+# ===== ACTIONS: TRANSPORT ===============================================
+
+to-load empty truck
+  needs: truck.position = depot
+  makes: stone.location: depot -> truck, cargo: none -> loose
+
+to-secure loose cargo
+  makes: cargo: loose -> secured
+
+# Unloading includes the drive from the depot to the building site.
+to-unload full trailer
+  needs: tire = inflated, tank = full, brake = new, road = clear
+  makes: truck.position: depot -> site, stone.location: truck -> site, cargo: secured -> none
+
+to-repair damaged vehicle
+  makes: vehicle.body: damaged -> repaired
+
+to-inflate flat tire
+  makes: tire: flat -> inflated
+
+to-refuel empty tank
+  makes: tank: empty -> full
+
+to-clear blocked road
+  makes: road: blocked -> clear
+
+to-replace worn brake
+  makes: brake: worn -> new
+
+to-clean dirty windshield
+  makes: windshield: dirty -> clean
+
+to-cool overheated engine
+  makes: engine: overheated -> cool
+
+
+# ===== ACTIONS: AGRICULTURE =============================================
+
+to-aerate compacted soil
+  makes: soil.structure: compacted -> aerated
+
+to-water dry soil
+  needs: soil.structure = aerated
+  makes: soil.moisture: dry -> watered
+
+to-fertilize depleted soil
+  needs: soil.structure = aerated
+  makes: soil.nutrients: depleted -> fertilized
+
+to-drain flooded field
+  makes: field: flooded -> drained
+
+to-harvest ripe wheat
+  needs: field = drained
+  makes: wheat: ripe -> harvested, hay: none -> bale
+
+to-feed hungry cattle
+  makes: cattle: hungry -> fed, hay: bale -> eaten
+
+to-shear woolly sheep
+  makes: sheep: woolly -> shorn, wool: none -> shorn
+
+to-prune overgrown vine
+  makes: vine: overgrown -> pruned
+
+to-weed overgrown seedbed
+  makes: seedbed: overgrown -> weeded
+
+# The stable is cleaned after feeding, when the cattle are out of it.
+to-clean dirty stable
+  needs: cattle = fed
+  makes: stable: dirty -> clean
