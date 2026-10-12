@@ -1,0 +1,33 @@
+auth sector
+1. to-hash plain password
+2. to-rotate old secret
+3. to-build missing endpoint
+4. to-create missing session
+5. to-expire endless session
+6. to-limit unlimited attempts
+7. to-enable disabled 2fa
+8. to-add missing recovery
+9. to-verify unconfirmed email
+10. to-lock suspicious account
+DB sector
+1. to-install missing database
+2. to-start stopped server
+3. to-migrate empty schema
+4. to-create missing table
+5. to-seed empty table
+6. to-index slow query
+7. to-encrypt plain connection
+8. to-close open port
+9. to-backup unprotected data
+10. to-tune default config
+UI sector
+1. to-design missing layout
+2. to-build missing form
+3. to-link unlinked form
+4. to-validate unchecked input
+5. to-show hidden errors
+6. to-add missing dashboard
+7. to-fill empty dashboard
+8. to-add missing logout
+9. to-fix broken viewport
+10. to-label unlabeled fields

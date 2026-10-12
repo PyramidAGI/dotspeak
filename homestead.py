@@ -76,7 +76,9 @@ def load_sectors(path=TASK_FILE):
         if not line:
             continue
         if line.endswith("sector"):
-            current = line.removesuffix("sector").strip().capitalize()
+            current = line.removesuffix("sector").strip()
+            if current == current.lower():  # "auth" -> "Auth"; keep "DB" and "UI".
+                current = current.capitalize()
             sectors[current] = []
         elif current:
             label = re.sub(r"^\d+\.\s*", "", line)

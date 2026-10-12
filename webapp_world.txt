@@ -1,0 +1,178 @@
+# The web app world as objects, states and actions.
+# Same format as homestead_world.txt:
+#   object: state, state, ...          the first state is the start state
+#   task name                          as in webapp_tasks.txt
+#     needs: object = state, ...       must be true before the task
+#     makes: object: from -> to, ...   changes a state
+# Every task has the form verb + state + object, for example
+# to-hash plain password: the object is password, the state before is plain.
+# Lines starting with # are comments.
+
+
+# ===== OBJECTS ==========================================================
+
+# Auth
+password: plain, hashed
+secret: old, rotated
+endpoint: missing, built
+session: missing, endless, expiring
+attempts: unlimited, limited
+2fa: disabled, enabled
+recovery: missing, added
+email: unconfirmed, verified
+account: suspicious, locked
+
+# DB
+database: missing, installed
+server: stopped, running
+schema: empty, migrated
+table: missing, empty, seeded
+query: slow, indexed
+connection: plain, encrypted
+port: open, closed
+data: unprotected, protected
+config: default, tuned
+
+# UI
+layout: missing, designed
+form: missing, unlinked, linked
+input: unchecked, validated
+errors: hidden, shown
+dashboard: missing, empty, filled
+logout: missing, added
+viewport: broken, fixed
+fields: unlabeled, labeled
+
+
+# ===== ACTIONS: AUTH ====================================================
+
+# Passwords are hashed before any user is stored.
+to-hash plain password
+  needs: table = empty
+  makes: password: plain -> hashed
+
+to-rotate old secret
+  makes: secret: old -> rotated
+
+# The login endpoint needs stored users and an encrypted connection.
+to-build missing endpoint
+  needs: table = seeded, connection = encrypted
+  makes: endpoint: missing -> built
+
+# Sessions are signed with the secret.
+to-create missing session
+  needs: endpoint = built, secret = rotated
+  makes: session: missing -> endless
+
+to-expire endless session
+  makes: session: endless -> expiring
+
+to-limit unlimited attempts
+  needs: endpoint = built
+  makes: attempts: unlimited -> limited
+
+to-enable disabled 2fa
+  needs: endpoint = built
+  makes: 2fa: disabled -> enabled
+
+# Password recovery by mail.
+to-add missing recovery
+  needs: endpoint = built
+  makes: recovery: missing -> added
+
+# Verification mails use the same mail sending as recovery.
+to-verify unconfirmed email
+  needs: recovery = added
+  makes: email: unconfirmed -> verified
+
+to-lock suspicious account
+  needs: attempts = limited
+  makes: account: suspicious -> locked
+
+
+# ===== ACTIONS: DB ======================================================
+
+to-install missing database
+  makes: database: missing -> installed
+
+to-start stopped server
+  needs: database = installed
+  makes: server: stopped -> running
+
+to-migrate empty schema
+  needs: server = running
+  makes: schema: empty -> migrated
+
+# The users table.
+to-create missing table
+  needs: schema = migrated
+  makes: table: missing -> empty
+
+to-seed empty table
+  needs: password = hashed
+  makes: table: empty -> seeded
+
+to-index slow query
+  needs: table = seeded
+  makes: query: slow -> indexed
+
+to-encrypt plain connection
+  needs: server = running
+  makes: connection: plain -> encrypted
+
+to-close open port
+  needs: server = running
+  makes: port: open -> closed
+
+to-backup unprotected data
+  needs: table = seeded
+  makes: data: unprotected -> protected
+
+to-tune default config
+  needs: server = running
+  makes: config: default -> tuned
+
+
+# ===== ACTIONS: UI ======================================================
+
+to-design missing layout
+  makes: layout: missing -> designed
+
+# The login form.
+to-build missing form
+  needs: layout = designed
+  makes: form: missing -> unlinked
+
+to-link unlinked form
+  needs: endpoint = built
+  makes: form: unlinked -> linked
+
+to-validate unchecked input
+  needs: layout = designed
+  makes: input: unchecked -> validated
+
+to-show hidden errors
+  needs: form = linked
+  makes: errors: hidden -> shown
+
+# The dashboard is only for logged-in users with an expiring session.
+to-add missing dashboard
+  needs: session = expiring
+  makes: dashboard: missing -> empty
+
+to-fill empty dashboard
+  needs: query = indexed
+  makes: dashboard: empty -> filled
+
+to-add missing logout
+  needs: session = expiring
+  makes: logout: missing -> added
+
+# The mobile view.
+to-fix broken viewport
+  needs: layout = designed
+  makes: viewport: broken -> fixed
+
+to-label unlabeled fields
+  needs: form = linked
+  makes: fields: unlabeled -> labeled

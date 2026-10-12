@@ -19,7 +19,7 @@ import tkinter as tk
 from collections import Counter
 from tkinter import ttk
 
-from homestead import BG, W, Homestead, load_sectors, load_world
+from homestead import BG, TASK_FILE, W, WORLD_FILE, Homestead, load_sectors, load_world
 
 
 def conditions(action):
@@ -111,17 +111,22 @@ def final_state(actions, state):
 
 
 class Planner(Homestead):
-    """Uses the rules and drawing of the game, with a goal and plan panel."""
+    """Uses the rules and drawing of the game, with a goal and plan panel.
+
+    Subclasses can plan another world: set the files and title, and override draw().
+    """
+
+    task_file, world_file, title = TASK_FILE, WORLD_FILE, "Homestead planner"
 
     def __init__(self, window):
         self.window = window
-        self.sectors = load_sectors()
+        self.sectors = load_sectors(self.task_file)
         self.labels = {key: label for tasks in self.sectors.values() for key, label in tasks}
-        self.objects, actions = load_world()
+        self.objects, actions = load_world(self.world_file)
         self.actions = {k: a for k, a in actions.items() if k in self.labels}
         self.state, self.done, self.moves = {}, set(), 0
         self.goals, self.plan, self.plan_stages, self.running = [], [], [], None
-        window.title("Homestead planner")
+        window.title(self.title)
         window.configure(bg=BG)
 
         self.canvas = tk.Canvas(window, width=W, height=540, highlightthickness=0)

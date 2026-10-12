@@ -140,6 +140,28 @@ If the goals cannot all be true together, the planner says so. An example is
 `cargo = secured` with `truck.position = site`: unloading at the site
 removes the cargo.
 
+## Web app planner
+
+```
+python webapp_planner.py
+```
+
+The same planner for another world: a web app with login.
+
+| File | What it holds |
+| --- | --- |
+| `webapp_tasks.txt` | The task list: auth, DB and UI sectors, ten tasks each |
+| `webapp_world.txt` | The rules, in the same format as `homestead_world.txt` |
+
+The scene has one column per sector and one box per object. The colour
+shows the state: red for the start state, yellow in between, green for the
+last state. A thick border marks what the last task changed and a star
+marks a goal. The drawing uses no task or object names, so it works with
+any world file.
+
+To plan another world, copy `webapp_planner.py` and change `task_file`,
+`world_file` and `title`.
+
 ## Limits
 
 The model has no amounts (how much stone), no time, no alternatives
