@@ -1,0 +1,8 @@
+	siemens PLC
+Function physics pref control X control the actuator
+Function physics stat navigate X navigate the PLC
+pump economics stat navigate X search the best pump function
+Algo economics pref control T find the best Algo
+Algo economics own plan P what is the most efficient algo?
+pump economics stat control P optimize energy for controlling pump
+Algo social loc plan T think about the social consequences of this algo
