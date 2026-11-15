@@ -67,6 +67,10 @@ Run finds that row and does not ask again.
                     question is about 'this function'.
 An empty answer skips a question; Cancel stops the asking for this Run.
 
+Random adds a line to the end of the text: Lkpadd and the text of a random
+button, such as 'Lkpadd Social'. It chooses from all the buttons but those of
+the Operators row. Under a Def the line is indented like the lines above it.
+
 text_board.txt holds the buttons. Every line is one row: a name, a colon and
 the texts of the buttons with spaces between them, such as
   Blocks: Check Map Reduce Filter
@@ -355,6 +359,11 @@ class TextBoard:
         self.help_window = None
 
         rows = load_rows(button_file)
+        # The texts the Random button chooses from: every button but the operators.
+        self.random_texts = [text for name, texts in rows if name.lower() != "operators"
+                             for text in texts if text.lower() != "lkpadd"]
+        tk.Button(top, text="Random", font=FONT, width=8, takefocus=False,
+                  command=self.random_lkpadd).pack(side="left", padx=(4, 0))
         palette = tk.Frame(root)
         palette.pack(fill="x", padx=10)
         line = 0
@@ -442,6 +451,23 @@ class TextBoard:
         self.result.config(state="disabled")
         self.result_name.config(text="Result")
         self.active.focus_set()
+
+    def random_lkpadd(self):
+        """Add a line to the end of the text: Lkpadd and the text of a random button."""
+        if not self.random_texts:
+            self.say("Random finds no buttons to choose from.")
+            return
+        text = self.active = self.text
+        lines = [line for line in text.get("1.0", "end-1c").splitlines() if line.split()]
+        # Under a Def the line is indented, so it is about that function.
+        last = lines[-1] if lines else ""
+        indent = "\t" if last[:1].isspace() or last.lower().startswith("def ") else ""
+        text.edit_separator()
+        if text.get("1.0", "end-1c") and text.get("end-2c", "end-1c") != "\n":
+            text.insert("end", "\n")
+        text.insert("end", f"{indent}Lkpadd {random.choice(self.random_texts)}")
+        text.mark_set("insert", "end")
+        self.finish()
 
     def help(self):
         """Show the help file in a window of its own; it is read on every click."""
