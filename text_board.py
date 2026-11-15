@@ -131,7 +131,8 @@ MEASURES = {"sum": sum, "avg": lambda values: sum(values) / len(values), "min": 
             "max": max}
 COMPARE = {"=": operator.eq, ">": operator.gt, "<": operator.lt}
 NOT_YET = {"+", "-", "*", "/", "sin", "cos", "sqrt", "map", "reduce", "filter", "estimate",
-           "compute"}
+           "compute", "distinguish", "identify", "measure", "classify", "decompose",
+           "relate", "abstract", "deduce", "validate"}
 # Colour of a line in the Result board: for yes, for no, for a plain outcome, for an error.
 RESULT_COLORS = {True: "#1f5c23", False: "#b03a2e", None: "#222222", "error": "#a05a00"}
 
@@ -528,7 +529,7 @@ class TextBoard:
             self.help_window.destroy()
         self.help_window = window = tk.Toplevel(self.root)
         window.title("Help")
-        window.geometry("560x320")
+        window.geometry("640x560")
         text = tk.Text(window, font=FONT, wrap="word", relief="flat", padx=14, pady=12,
                        spacing2=3)
         bar = tk.Scrollbar(window, command=text.yview)

@@ -1,1 +1,33 @@
 A program basically is an energy landscape. In it are agglomerations. It is like a glass bead game. The beads are the agglomerations. They are in a x-y coordinate landscape. The different modules and functions are the beads. I want to use the convolute.txt file combinations to define the beads. So for instance, ask the question, for this bead, what is the phyics.loc.control.X? the user then has to answer this and the bead + answer will be stored.
+
+The ten steps (the buttons of the Steps row)
+
+1. Distinguish - What differs from what?
+   Example: Detect a difference between actual and desired temperature.
+
+2. Identify - What is this?
+   Example: Recognize a reading as temperature.
+
+3. Measure - How much?
+   Example: Express the temperature as 18°C.
+
+4. Classify - What belongs together?
+   Example: Group readings into cold, comfortable, and hot.
+
+5. Decompose - What are its parts?
+   Example: Split heat demand into losses through walls, windows, and ventilation.
+
+6. Relate - How are things connected?
+   Example: Describe how heat loss depends on temperature difference.
+
+7. Abstract - What structure can we retain across cases?
+   Example: Represent different buildings with the same heat-balance model.
+
+8. Deduce - What follows from what we know or assume?
+   Example: Derive the heating power required under specified conditions.
+
+9. Compute - What result follows from executing a procedure?
+   Example: Calculate the required power numerically.
+
+10. Validate - Does the result withstand checking?
+   Example: Compare predicted temperature with measured temperature.

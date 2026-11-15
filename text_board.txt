@@ -4,3 +4,4 @@ Blocks: Check Map Reduce Filter Count Estimate Compute Head Tail Lkpadd
 Perspectives: Process Things IT Economics Physics Social Nav Ctrl Plan
 Aspects: pref stat loc own
 Compare: = > < not and or
+Steps: Distinguish Identify Measure Classify Decompose Relate Abstract Deduce Compute Validate
