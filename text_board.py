@@ -66,10 +66,14 @@ Run finds that row and does not ask again.
                     pump, what is the ...?'. Without it and without a Def the
                     question is about 'this function'.
 An empty answer skips a question; Cancel stops the asking for this Run.
+Copy as-is puts the combination in the dataset as it is, without an answer:
+the row 'Function physics loc control X'. It is not asked again either.
 
 Random adds a line to the end of the text: Lkpadd and the text of a random
 button, such as 'Lkpadd Social'. It chooses from all the buttons but those of
 the Operators row. Under a Def the line is indented like the lines above it.
+
+Def Function adds the line 'Def Function():' to the end of the text.
 
 text_board.txt holds the buttons. Every line is one row: a name, a colon and
 the texts of the buttons with spaces between them, such as
@@ -237,6 +241,7 @@ def run_line(line, rows):
 
 ALIASES = {"ctrl": "control", "nav": "navigate"}  # Buttons that stand for a question word.
 MAX_ASK = 3  # The most questions one Lkpadd line asks in a Run.
+COPY = object()  # The answer of 'Copy as-is': keep the combination, without a text.
 
 
 def load_levels(path=CONVOLUTE_FILE):
@@ -285,7 +290,10 @@ def lookup_add(words, name, rows, levels, ask):
         if known:
             note += f" {known} of that set are already in the dataset."
         answer = ask(f"For {whom}, what is the {'.'.join(key)}?\n\n{note}") if ask else None
-        if answer and answer.split():
+        if answer is COPY:
+            added.append(subject + list(key))
+            rows.append(added[-1])
+        elif answer and answer.split():
             added.append(subject + list(key) + answer.split())
             rows.append(added[-1])
     outcome = (f"{whom}: asked {len(asking)} out of a set of {len(keys)}, {len(added)} added, "
@@ -297,8 +305,8 @@ def run(text, data, ask=None):
     """Work out every line of the text. Gives (results, added): the results are a list
     of (line, answer, outcome), where the answer is True, False, None for a plain
     outcome or 'error'; added are the rows Lkpadd made for the dataset.
-    ask(question) gives the answer to a question of Lkpadd, '' to skip it or None to
-    stop asking."""
+    ask(question) gives the answer to a question of Lkpadd, '' to skip it, COPY to
+    keep the combination without an answer or None to stop asking."""
     rows = data_rows(data)
     levels = load_levels()
     results, added = [], []
@@ -335,6 +343,40 @@ def run(text, data, ask=None):
     return results, added
 
 
+class AskDialog(simpledialog.Dialog):
+    """The dialog of Lkpadd: a question, a box for the answer and three buttons.
+    The answer is the text, COPY after 'Copy as-is' or None after Cancel."""
+
+    def __init__(self, parent, question):
+        self.question = question
+        self.answer = None
+        super().__init__(parent, "Lkpadd")
+
+    def body(self, master):
+        tk.Label(master, text=self.question, font=FONT, justify="left", anchor="w",
+                 wraplength=460).pack(fill="x", padx=8, pady=(8, 6))
+        self.entry = tk.Entry(master, font=FONT, width=52)
+        self.entry.pack(fill="x", padx=8, pady=(0, 4))
+        return self.entry  # Gets the focus.
+
+    def buttonbox(self):
+        box = tk.Frame(self)
+        for name, command in (("OK", self.ok), ("Copy as-is", self.copy),
+                              ("Cancel", self.cancel)):
+            tk.Button(box, text=name, font=FONT, width=10, command=command).pack(
+                side="left", padx=4, pady=8)
+        box.pack()
+        self.bind("<Return>", self.ok)
+        self.bind("<Escape>", self.cancel)
+
+    def apply(self):  # After OK.
+        self.answer = self.entry.get()
+
+    def copy(self):
+        self.answer = COPY
+        self.cancel()  # Closes the dialog; the answer stays.
+
+
 class TextBoard:
     def __init__(self, root, button_file=BUTTON_FILE, text_file=TEXT_FILE,
                  dataset_file=DATASET_FILE):
@@ -364,6 +406,9 @@ class TextBoard:
                              for text in texts if text.lower() != "lkpadd"]
         tk.Button(top, text="Random", font=FONT, width=8, takefocus=False,
                   command=self.random_lkpadd).pack(side="left", padx=(4, 0))
+        tk.Button(top, text="Def Function", font=FONT, width=11, takefocus=False,
+                  command=lambda: self.add_line("Def Function():")).pack(
+                      side="left", padx=(4, 0))
         palette = tk.Frame(root)
         palette.pack(fill="x", padx=10)
         line = 0
@@ -457,15 +502,20 @@ class TextBoard:
         if not self.random_texts:
             self.say("Random finds no buttons to choose from.")
             return
-        text = self.active = self.text
+        text = self.text
         lines = [line for line in text.get("1.0", "end-1c").splitlines() if line.split()]
         # Under a Def the line is indented, so it is about that function.
         last = lines[-1] if lines else ""
         indent = "\t" if last[:1].isspace() or last.lower().startswith("def ") else ""
+        self.add_line(f"{indent}Lkpadd {random.choice(self.random_texts)}")
+
+    def add_line(self, line):
+        """Add a line of its own to the end of the text."""
+        text = self.active = self.text
         text.edit_separator()
         if text.get("1.0", "end-1c") and text.get("end-2c", "end-1c") != "\n":
             text.insert("end", "\n")
-        text.insert("end", f"{indent}Lkpadd {random.choice(self.random_texts)}")
+        text.insert("end", line)
         text.mark_set("insert", "end")
         self.finish()
 
@@ -490,10 +540,11 @@ class TextBoard:
         window.bind("<Escape>", lambda event: window.destroy())
 
     def ask(self, question):
-        """Ask a question of Lkpadd: the answer, '' to skip it or None to stop asking."""
-        return simpledialog.askstring(
-            "Lkpadd", question + "\n\nAn empty answer skips this question; Cancel stops.",
-            parent=self.root)
+        """Ask a question of Lkpadd: the answer, '' to skip it, COPY to keep the
+        combination as it is or None to stop asking."""
+        return AskDialog(self.root, question + "\n\nAn empty answer skips this question. "
+                         "Copy as-is puts the combination in the dataset without an "
+                         "answer. Cancel stops.").answer
 
     def say(self, text):
         self.status.config(text=text)
