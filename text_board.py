@@ -18,6 +18,9 @@ the selected text.
 Run (or F5) works out every line of the text against the dataset and shows the
 outcome per line in the Result board at the bottom.
 
+Help (or F1) shows the file 'A program basically is an energy landscape.txt' in
+a window of its own. Change that file to change the help.
+
 In the dataset every line is one row of words, such as
   john social pref amsterdam
   jill social stat emo 30
@@ -43,6 +46,27 @@ So 'Check Count Dataset = 2' answers yes for the two rows above,
 'avg stat' gives 30 and 'Tail social' shows the row of jill. Run does not know
 the other operators and blocks yet and says so on their lines.
 
+Lkpadd looks answers up in the dataset and asks for the ones that are missing:
+  Def Function():
+      Lkpadd Physics loc Ctrl X
+asks 'For Function, what is the physics.loc.control.X?' and adds your answer to
+the dataset as the row 'Function physics loc control X' and the answer. The next
+Run finds that row and does not ask again.
+  Def name():       names what the indented lines below it are about
+  Lkpadd            the questions come from convolute.txt: one word from each of
+                    its lines. Every word you leave out stands for all the words
+                    of its line, so 'Lkpadd Physics' stands for a set of 48
+                    physics questions. Ctrl and Nav stand for control and
+                    navigate.
+  3 at most         a Lkpadd line asks at most 3 questions in a Run, taken at
+                    random from the ones of its set that are not in the dataset
+                    yet. The dialog says so: 'This is question 1 of 3, taken at
+                    random out of a set of 48 questions.' Run again for 3 more.
+  Lkpadd Economics pump     another word is what the question is about: 'For
+                    pump, what is the ...?'. Without it and without a Def the
+                    question is about 'this function'.
+An empty answer skips a question; Cancel stops the asking for this Run.
+
 text_board.txt holds the buttons. Every line is one row: a name, a colon and
 the texts of the buttons with spaces between them, such as
   Blocks: Check Map Reduce Filter
@@ -54,15 +78,20 @@ Both are saved after every change.
 Uses only the standard library of Python (Tkinter is required for the window).
 """
 
+import itertools
 import operator
 import os
+import random
 import tkinter as tk
 from pathlib import Path
+from tkinter import simpledialog
 
 HERE = Path(__file__).parent
 BUTTON_FILE = HERE / "text_board.txt"
 TEXT_FILE = HERE / "text_board_saved.txt"
 DATASET_FILE = HERE / "text_board_dataset.txt"
+CONVOLUTE_FILE = HERE / "convolute.txt"
+HELP_FILE = HERE / "A program basically is an energy landscape.txt"
 ACTIVE = "#2f5bd3"  # Border of the board the buttons work in.
 FONT = ("Segoe UI", 11)
 BUTTON_FONT = ("Consolas", 12, "bold")
@@ -202,18 +231,104 @@ def run_line(line, rows):
     return answer, outcome
 
 
-def run(text, data):
-    """Work out every line of the text: a list of (line, answer, outcome), where the
-    answer is True, False, None for a plain outcome or 'error'."""
+ALIASES = {"ctrl": "control", "nav": "navigate"}  # Buttons that stand for a question word.
+MAX_ASK = 3  # The most questions one Lkpadd line asks in a Run.
+
+
+def load_levels(path=CONVOLUTE_FILE):
+    """The words of each level of a question: one list per line that is not empty."""
+    if not path.exists():
+        return []
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return [line.split() for line in lines if line.split()]
+
+
+def lookup_add(words, name, rows, levels, ask):
+    """Look up the answers to the questions these words stand for, and ask for the
+    missing ones. New answers are added to the rows. Gives (outcome, added rows)."""
+    if not levels:
+        raise RunError(f"Lkpadd finds no questions in {CONVOLUTE_FILE.name}")
+    chosen = [[] for _ in levels]
+    subject = []
+    for word in words:
+        low = ALIASES.get(word.lower(), word.lower())
+        for level, picks in zip(levels, chosen):
+            match = next((known for known in level if known.lower() == low), None)
+            if match:
+                if match not in picks:
+                    picks.append(match)
+                break
+        else:
+            subject.append(word)
+    if not subject and name:
+        subject = [name]
+    whom = " ".join(subject) or "this function"
+    subject = subject or ["function"]
+    keys = list(itertools.product(*(picks or level for picks, level in zip(chosen, levels))))
+    still_open = []
+    for key in keys:
+        start = [word.lower() for word in subject + list(key)]
+        if not any([word.lower() for word in row[:len(start)]] == start for row in rows):
+            still_open.append(key)
+    known = len(keys) - len(still_open)
+    # At most MAX_ASK questions per line: a random choice from the open ones.
+    asking = sorted(random.sample(still_open, min(MAX_ASK, len(still_open))), key=keys.index)
+    added = []
+    for at, key in enumerate(asking, 1):
+        note = f"This is question {at} of {len(asking)}"
+        note += (f", taken at random out of a set of {len(keys)} questions."
+                 if len(keys) > len(asking) else ".")
+        if known:
+            note += f" {known} of that set are already in the dataset."
+        answer = ask(f"For {whom}, what is the {'.'.join(key)}?\n\n{note}") if ask else None
+        if answer and answer.split():
+            added.append(subject + list(key) + answer.split())
+            rows.append(added[-1])
+    outcome = (f"{whom}: asked {len(asking)} out of a set of {len(keys)}, {len(added)} added, "
+               f"{known} already in the dataset, {len(still_open) - len(added)} still open")
+    return outcome, added
+
+
+def run(text, data, ask=None):
+    """Work out every line of the text. Gives (results, added): the results are a list
+    of (line, answer, outcome), where the answer is True, False, None for a plain
+    outcome or 'error'; added are the rows Lkpadd made for the dataset.
+    ask(question) gives the answer to a question of Lkpadd, '' to skip it or None to
+    stop asking."""
     rows = data_rows(data)
-    results = []
+    levels = load_levels()
+    results, added = [], []
+    name = None  # What the lines are about: the name of the Def they stand under.
+    stopped = False
+
+    def ask_on(question):
+        nonlocal stopped
+        answer = None if stopped or not ask else ask(question)
+        stopped = answer is None
+        return answer
+
     for line in text.splitlines():
-        if line.split():
-            try:
+        words = line.split()
+        if not words:
+            continue
+        if not line[0].isspace():
+            name = None
+        try:
+            first = words[0].lower()
+            if first == "def":
+                name = words[1].split("(")[0].rstrip(":") if len(words) > 1 else ""
+                if not name:
+                    raise RunError("Def needs a name, such as Def Function():")
+                results.append((line.strip(), None, f"the lines below are about {name}"))
+            elif first == "lkpadd":
+                outcome, new = lookup_add(words[1:], name, rows, levels, ask_on)
+                added += new
+                results.append((line.strip(), None, outcome))
+            else:
                 results.append((line.strip(), *run_line(line, rows)))
-            except RunError as error:
-                results.append((line.strip(), "error", str(error)))
-    return results
+        except RunError as error:
+            results.append((line.strip(), "error", str(error)))
+    return results, added
 
 
 class TextBoard:
@@ -234,6 +349,10 @@ class TextBoard:
         tk.Button(top, text="Run", font=FONT, width=8, takefocus=False, bg="#d3edd5",
                   activebackground="#d3edd5", command=self.run).pack(side="left", padx=(12, 0))
         root.bind("<F5>", lambda event: self.run())
+        tk.Button(top, text="Help", font=FONT, width=8, takefocus=False,
+                  command=self.help).pack(side="left", padx=(12, 0))
+        root.bind("<F1>", lambda event: self.help())
+        self.help_window = None
 
         rows = load_rows(button_file)
         palette = tk.Frame(root)
@@ -302,7 +421,17 @@ class TextBoard:
 
     def run(self):
         """Work out the text against the dataset and show the outcome of every line."""
-        results = run(self.text.get("1.0", "end-1c"), self.dataset.get("1.0", "end-1c"))
+        results, added = run(self.text.get("1.0", "end-1c"),
+                             self.dataset.get("1.0", "end-1c"), self.ask)
+        if added:  # The answers Lkpadd got: new rows at the end of the dataset.
+            data = self.dataset
+            data.edit_separator()
+            if data.get("1.0", "end-1c") and data.get("end-2c", "end-1c") != "\n":
+                data.insert("end", "\n")
+            data.insert("end", "".join(" ".join(row) + "\n" for row in added))
+            data.edit_separator()
+            data.see("end")
+            self.changed(data)
         self.result.config(state="normal")
         self.result.delete("1.0", "end")
         for line, answer, outcome in results:
@@ -313,6 +442,32 @@ class TextBoard:
         self.result.config(state="disabled")
         self.result_name.config(text="Result")
         self.active.focus_set()
+
+    def help(self):
+        """Show the help file in a window of its own; it is read on every click."""
+        if not HELP_FILE.exists():
+            self.say(f"There is no help file: {HELP_FILE.name} is missing.")
+            return
+        if self.help_window and self.help_window.winfo_exists():
+            self.help_window.destroy()
+        self.help_window = window = tk.Toplevel(self.root)
+        window.title("Help")
+        window.geometry("560x320")
+        text = tk.Text(window, font=FONT, wrap="word", relief="flat", padx=14, pady=12,
+                       spacing2=3)
+        bar = tk.Scrollbar(window, command=text.yview)
+        text.config(yscrollcommand=bar.set)
+        bar.pack(side="right", fill="y")
+        text.pack(side="left", fill="both", expand=True)
+        text.insert("1.0", HELP_FILE.read_text(encoding="utf-8", errors="replace"))
+        text.config(state="disabled")
+        window.bind("<Escape>", lambda event: window.destroy())
+
+    def ask(self, question):
+        """Ask a question of Lkpadd: the answer, '' to skip it or None to stop asking."""
+        return simpledialog.askstring(
+            "Lkpadd", question + "\n\nAn empty answer skips this question; Cancel stops.",
+            parent=self.root)
 
     def say(self, text):
         self.status.config(text=text)
